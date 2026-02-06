@@ -87,6 +87,20 @@ function createGlowTexture() {
     } catch (e) { return null; }
 }
 
+// --- PRELOAD ASSETS ---
+let preloadedRose = null;
+let preloadedFont = null;
+
+const gltfLoader = new GLTFLoader(manager);
+gltfLoader.load('rose.glb', (gltf) => {
+    preloadedRose = gltf.scene;
+});
+
+const fontLoader = new FontLoader(manager);
+fontLoader.load('https://unpkg.com/three@0.160.0/examples/fonts/droid/droid_sans_bold.typeface.json', (font) => {
+    preloadedFont = font;
+});
+
 // --- FIELD ---
 const instances = [];
 let redMesh, whiteMesh;
@@ -340,23 +354,36 @@ function spawnFinalRose() {
     gsap.to(redMesh.material, { opacity: 0.05, duration: 2 });
     gsap.to(whiteMesh.material, { opacity: 0.05, duration: 2 });
     load3DText();
-    const loader = new GLTFLoader();
-    loader.load('rose.glb', (gltf) => { setupFinalModel(gltf.scene); }, undefined, () => { });
+
+    // Use Preloaded Model
+    if (preloadedRose) {
+        setupFinalModel(preloadedRose.clone()); // Clone to be safe, though used once
+    } else {
+        // Fallback if somehow not loaded (though manager prevents this)
+        const loader = new GLTFLoader();
+        loader.load('rose.glb', (gltf) => { setupFinalModel(gltf.scene); });
+    }
 }
 
 function load3DText() {
-    const loader = new FontLoader();
-    loader.load('https://unpkg.com/three@0.160.0/examples/fonts/droid/droid_sans_bold.typeface.json', function (font) {
-        const geometry = new TextGeometry('ONLY FOR YOU', { font: font, size: 1.5, height: 0.2, curveSegments: 12, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.02, bevelOffset: 0, bevelSegments: 5 });
-        geometry.computeBoundingBox();
-        const xOffset = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
-        geometry.translate(xOffset, 6.5, 0);
-        const material = new THREE.MeshStandardMaterial({ color: 0xe91e63, roughness: 0.4, metalness: 0.3, emissive: 0x880033, emissiveIntensity: 0.4 });
-        const textMesh = new THREE.Mesh(geometry, material);
-        textMesh.scale.set(0, 0, 0); textMesh.name = "FinalText";
-        scene.add(textMesh);
-        gsap.to(textMesh.scale, { x: 1, y: 1, z: 1, delay: 0.5, duration: 2, ease: "back.out(1.7)" });
-    });
+    if (preloadedFont) {
+        create3DText(preloadedFont);
+    } else {
+        const loader = new FontLoader();
+        loader.load('https://unpkg.com/three@0.160.0/examples/fonts/droid/droid_sans_bold.typeface.json', create3DText);
+    }
+}
+
+function create3DText(font) {
+    const geometry = new TextGeometry('ONLY FOR YOU', { font: font, size: 1.5, height: 0.2, curveSegments: 12, bevelEnabled: true, bevelThickness: 0.05, bevelSize: 0.02, bevelOffset: 0, bevelSegments: 5 });
+    geometry.computeBoundingBox();
+    const xOffset = -0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
+    geometry.translate(xOffset, 6.5, 0);
+    const material = new THREE.MeshStandardMaterial({ color: 0xe91e63, roughness: 0.4, metalness: 0.3, emissive: 0x880033, emissiveIntensity: 0.4 });
+    const textMesh = new THREE.Mesh(geometry, material);
+    textMesh.scale.set(0, 0, 0); textMesh.name = "FinalText";
+    scene.add(textMesh);
+    gsap.to(textMesh.scale, { x: 1, y: 1, z: 1, delay: 0.5, duration: 2, ease: "back.out(1.7)" });
 }
 
 function setupFinalModel(model) {
