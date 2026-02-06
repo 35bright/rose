@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;500;700&family=Anek+Bangla:wght@300;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Three.js & GSAP Import Map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="spinner"></div>
+            <p>Planting your roses...</p>
+        </div>
+    </div>
+
+    <!-- 3D Background Container -->
+    <div id="canvas-container"></div>
+
+    <!-- UI Overlay container -->
+    <main id="ui-layer">
+
+        <!-- Story Container that stays persistent -->
+        <div id="story-container" class="glass-panel story-card active">
+
+            <!-- Controls -->
+            <div class="card-controls">
+                <button id="minimize-btn" class="icon-btn-small" aria-label="Minimize" onclick="toggleMinimize()">
+                    <i class="fa-solid fa-minus"></i>
+                </button>
+                <div class="card-header-spacer"></div>
+                <button id="music-toggle" class="icon-btn-small" aria-label="Toggle Music">
+                    <i class="fa-solid fa-music"></i>
+                </button>
+            </div>
+
+            <!-- Content Container -->
+            <div id="card-content-wrapper">
+
+                <!-- Chapter 1: Intro -->
+                <section id="intro" class="section-content active">
+                    <h1>Hello Puspo!</h1>
+                    <p>A garden filled with roses just for you...</p>
+                    <button class="btn-primary" onclick="startExperience()">Enter The Garden <i
+                            class="fa-solid fa-heart"></i></button>
+                </section>
+
+                <!-- Chapter 2: Wishes -->
+                <section id="wishes" class="section-content hidden">
+                    <h2>Happy Rose Day, Puspo!</h2>
+                    <p>Every rose in this field represents a smile you've given me...May your life be as colorful and
+                        fragrant as these blooms.</p>
+                    <button class="btn-secondary" onclick="nextSection('wishes', 'wish-card-1')">Next<i
+                            class="fa-solid fa-arrow-right"></i></button>
+                </section>
+
+                <!-- NEW: Wish Card 1 -->
+                <section id="wish-card-1" class="section-content hidden">
+                    <h2>Peace & Joy</h2>
+                    <div class="heart-icon-large" style="font-size: 3rem; margin: 10px 0;">
+                        <!-- <i class="fa-solid fa-peace"></i> -->
+                    </div>
+                    <p>May your heart always find peace in the chaos and your days be filled with endless joy. I wish
+                        you all the happiness and love in the world!</p>
+                    <button class="btn-secondary" onclick="nextSection('wish-card-1', 'wish-card-2')">Next<i
+                            class="fa-solid fa-arrow-right"></i></button>
+                </section>
+
+                <!-- NEW: Wish Card 2 -->
+                <section id="wish-card-2" class="section-content hidden">
+                    <h2>Smile!!!</h2>
+                    <div class="heart-icon-large" style="font-size: 3rem; margin: 10px 0;">
+                        <!-- <i class="fa-solid fa-sun"></i> -->
+                    </div>
+                    <p>Stay beautiful as always, inside and out. Keep Smiling!!!</p>
+                    <button class="btn-secondary" onclick="nextSection('wish-card-2', 'memories')">Let's Goooo!!! <i
+                            class="fa-solid fa-arrow-right"></i></button>
+                </section>
+
+                <!-- Chapter 3: Memories -->
+                <section id="memories" class="section-content hidden">
+                    <h2 class="bangla-font">গোলাপের স্মৃতিগুলো!</h2>
+                    <div class="gallery-wrapper">
+                        <button class="nav-btn prev" onclick="scrollGallery(-1)"><i
+                                class="fa-solid fa-chevron-left"></i></button>
+                        <div class="gallery-slider" id="main-gallery">
+                            <div class="gallery-item">
+                                <img src="6.jpeg" alt="Rose 1" class="gallery-photo">
+                                <div class="text-overlay">
+                                    <span class="bangla-font">সেই প্রথম গোলাপ, ২৪/৭!</span>
+                                </div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="1.jpeg" alt="Rose 2" class="gallery-photo">
+                                <div class="text-overlay">
+                                    <span class="bangla-font">চায়ের সাথে গোলাপ, ভারী সুন্দর!</span>
+                                </div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="5.jpeg" alt="Rose 3" class="gallery-photo">
+                                <div class="text-overlay">
+                                    <span class="bangla-font">দেখো আমার জন্মদিনে তোমার দেয়া হলুদ গোলাপ টা! আবারো ধন্যবাদ
+                                        😭</span>
+                                </div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="4.jpeg" alt="Rose 4" class="gallery-photo">
+                                <div class="text-overlay">
+                                    <span class="bangla-font">নিনিকে কী সুন্দর লাগছিলো সেদিন!</span>
+                                </div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="3.jpeg" alt="Rose 4" class="gallery-photo">
+                                <div class="text-overlay">
+                                    <span class="bangla-font">লাল-সাদা গোলাপ একসাথে! তোমার ভালো লেগেছিলো নিশ্চয়ই,
+                                        তাইনা?</span>
+                                </div>
+                            </div>
+                            <div class="gallery-item">
+                                <img src="2.jpeg" alt="Rose 4" class="gallery-photo">
+                                <div class="text-overlay">
+                                    <span class="bangla-font">সেদিনের ফুলের কথাটা তোমার মনে আছে?</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="nav-btn next" onclick="scrollGallery(1)"><i
+                                class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                    <button class="btn-secondary" onclick="nextSection('memories', 'special-moment')">Next <i
+                            class="fa-solid fa-arrow-right"></i></button>
+                </section>
+
+                <!-- NEW SECTION: Special Flexible Image -->
+                <section id="special-moment" class="section-content hidden">
+                    <h4 class="bangla-font">লিখেছিলাম সেদিন গোলাপের কথা!</h4>
+                    <div class="flexible-frame">
+                        <img src="7.jpeg" alt="Special Memory" class="flexible-photo">
+                    </div>
+                    <button class="btn-secondary" onclick="nextSection('special-moment', 'message1')">Read More <i
+                            class="fa-solid fa-arrow-right"></i></button>
+                </section>
+
+                <!-- Chapter 4: Message Part 1 -->
+                <section id="message1" class="section-content hidden">
+                    <h2>Why You?</h2>
+                    <p>
+                        In a field of a thousand roses, my eyes would still search for you. With you by my side, the
+                        grey fades away and I am finally living <span class="small-text">'la vie en rose!'</span>
+                    </p>
+                    <button class="btn-secondary bangla-font" onclick="nextSection('message1', 'letter')">কিছু কথা! <i
+                            class="fa-solid fa-arrow-right"></i></button>
+                </section>
+
+                <!-- Chapter 5: Long Letter -->
+                <section id="letter" class="section-content hidden">
+                    <h2>A Letter To You</h2>
+                    <div class="scrollable-content">
+                        <p>Puspo,</p>
+                        <p>
+                            You are The Queen of The Flower Kingdom! The rarest and the beautifulest! The best flower in
+                            the world! You are the most
+                            special person in my life! This is just a small surprise for you on a special day! </p>
+                        <p>
+                            In the garden of my life, you are the fragrance that never fades and the color that never
+                            dims.Thank you for coming into my life and making it bloom, Puspo!
+                        </p>
+                        <p>- Sleeping Coconut</p>
+                    </div>
+                    <button class="btn-primary" onclick="revealSurprise()">এটা দেখো! <i
+                            class="fa-solid fa-gift"></i></button>
+                </section>
+
+                <!-- Chapter 6: Final (Hidden/Minimized content) -->
+                <section id="final-msg" class="section-content hidden">
+                    <h1>Thank You! <i class="fa-solid fa-heart"></i></h1>
+                    <p>For being the most beautiful part of my life. <i class="fa-solid fa-spa"></i><br>Happy Rose Day,
+                        The Flower!
+                    </p>
+                    <!-- <div class="heart-icon-large"><i class="fa-solid fa-heart"></i></div> -->
+                    <button class="btn-secondary" onclick="resetExperience()">Replay</button>
+                </section>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Audio Elements -->
+    <audio id="bg-music" loop>
+        <source src="./crystaleyeofficial-romantics-love-valentines-day-music-479726.mp3" type="audio/mp3">
+    </audio>
+
+    <script type="module" src="script.js"></script>
+    <script>
+        // UI Logic
+
+        function toggleMinimize() {
+            const card = document.getElementById('story-container');
+            const btnIcon = document.querySelector('#minimize-btn i');
+
+            card.classList.toggle('minimized');
+
+            if (card.classList.contains('minimized')) {
+                btnIcon.classList.remove('fa-minus');
+                btnIcon.classList.add('fa-plus');
+            } else {
+                btnIcon.classList.remove('fa-plus');
+                btnIcon.classList.add('fa-minus');
+            }
+        }
+
+        window.toggleMinimize = toggleMinimize;
+
+        window.scrollGallery = (direction) => {
+            const gallery = document.getElementById('main-gallery');
+            if (gallery) {
+                const scrollAmount = gallery.clientWidth * 0.85; // Scroll one item width
+                gallery.scrollBy({
+                    left: direction * scrollAmount,
+                    behavior: 'smooth'
+                });
+            }
+        };
+
+        window.startExperience = () => {
+            const music = document.getElementById('bg-music');
+            music.volume = 0.5;
+            music.play().catch(e => console.log("User interaction needed for audio"));
+
+            nextSection('intro', 'wishes');
+
+            // Trigger 3D Sequence
+            if (window.camEnterField) window.camEnterField();
+        };
+
+        window.nextSection = (currentId, nextId) => {
+            const current = document.getElementById(currentId);
+            const next = document.getElementById(nextId);
+
+            current.classList.remove('active');
+            current.classList.add('hidden');
+
+            setTimeout(() => {
+                next.classList.remove('hidden');
+                next.classList.add('active');
+            }, 400);
+        };
+
+        window.revealSurprise = () => {
+            const current = document.getElementById('letter');
+            current.classList.remove('active');
+            current.classList.add('hidden');
+
+            // Minimize UI automatically to get out of the way
+            const card = document.getElementById('story-container');
+            if (!card.classList.contains('minimized')) {
+                toggleMinimize();
+            }
+
+            // NOTE: We do NOT show 'final-msg' yet. We wait for the "Take It" interaction.
+
+            // Trigger 3D Sequence
+            if (window.triggerFinalReveal) window.triggerFinalReveal();
+        };
+
+        window.resetExperience = () => {
+            location.reload();
+        };
+
+        document.getElementById('music-toggle').addEventListener('click', () => {
+            const music = document.getElementById('bg-music');
+            const icon = document.querySelector('#music-toggle i');
+            if (music.paused) {
+                music.play();
+                icon.classList.remove('fa-volume-mute');
+                icon.classList.add('fa-music');
+            } else {
+                music.pause();
+                icon.classList.add('fa-volume-mute');
+                icon.classList.remove('fa-music');
+            }
+        });
+    </script>
+</body>
+
+</html>
